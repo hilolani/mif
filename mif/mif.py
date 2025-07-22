@@ -14,7 +14,7 @@ try:
 except ImportError:
     # Python 3.7–3.8
     from importlib_resources import files
-from . import data  # mif/data/
+#from . import data  # mif/data/
 import shutil
 
 #If you use a Google Colab user, run the following.
