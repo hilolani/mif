@@ -6,7 +6,6 @@ import itertools
 from scipy.io import mmread, mmwrite
 from scipy.sparse import csr_matrix,coo_matrix,isspmatrix_csr,isspmatrix_csc,isspmatrix_coo,csgraph
 from collections import defaultdict
-from sklearn.datasets import load_mif
 from sklearn.utils import Bunch
 try:
     # Python 3.9+
