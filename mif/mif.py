@@ -34,11 +34,11 @@ def load_mif(return_X_y=False, as_frame=False, scaled=False):
     return Bunch(
         ErdosReny = os.path.join(base_path, "ErdosReny.mtx")
         gadget = os.path.join(base_path, "gadget.mtx")
-        heterophilly = os.path.join(heterophilly, "matrix2.mtx")
+        heterophilly = os.path.join(heterophilly, "heterophilly.mtx")
         homophilly = os.path.join(base_path, "homophilly.mtx")
         karateclub = os.path.join(base_path, "karateclub.mtx")
         scalefree = os.path.join(base_path, "scalefree.mtx")
-        DESCR="This is a toy dataset consisting of seven sparse matrices in Matrix Market format."
+        DESCR="This is a toy dataset consisting of six sparse matrices in Matrix Market format."
     )
 
 def adjanceyinfocheck(adjacencymatrix):
