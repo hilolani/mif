@@ -31,7 +31,7 @@ CONST_COEFFICIENT_ARRAY = (1, 1.618033988749895, 1.8392867552141607, 1.927561975
 def load_mif(return_X_y=False, as_frame=False, scaled=False):
     base_path = os.path.join(os.path.dirname(__file__), "data")    
     return Bunch(
-        ErdosReny = os.path.join(base_path, "ErdosReny.mtx"),
+        erdosReny = os.path.join(base_path, "ErdosReny.mtx"),
         gadget = os.path.join(base_path, "gadget.mtx"),
         heterophilly = os.path.join(base_path, "heterophilly.mtx"),
         homophilly = os.path.join(base_path, "homophilly.mtx"),
