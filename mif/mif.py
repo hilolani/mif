@@ -14,7 +14,7 @@ try:
 except ImportError:
     # Python 3.7–3.8
     from importlib_resources import files
-#from . import data  # mif/data/
+from . import data  # mif/data/
 import shutil
 
 #If you use a Google Colab user, run the following.
@@ -32,12 +32,12 @@ CONST_COEFFICIENT_ARRAY = (1, 1.618033988749895, 1.8392867552141607, 1.927561975
 def load_mif(return_X_y=False, as_frame=False, scaled=False):
     base_path = os.path.join(os.path.dirname(__file__), "data")    
     return Bunch(
-        erdosReny = os.path.join(base_path, "ErdosReny.mtx")
-        gadget = os.path.join(base_path, "gadget.mtx")
-        heterophilly = os.path.join(heterophilly, "heterophilly.mtx")
-        homophilly = os.path.join(base_path, "homophilly.mtx")
-        karateclub = os.path.join(base_path, "karateclub.mtx")
-        scalefree = os.path.join(base_path, "scalefree.mtx")
+        ErdosReny = os.path.join(base_path, "ErdosReny.mtx"),
+        gadget = os.path.join(base_path, "gadget.mtx"),
+        heterophilly = os.path.join(base_path, "heterophilly.mtx"),
+        homophilly = os.path.join(base_path, "homophilly.mtx"),
+        karateclub = os.path.join(base_path, "karateclub.mtx"),
+        scalefree = os.path.join(base_path, "scalefree.mtx"),
         DESCR="This is a toy dataset consisting of six sparse matrices in Matrix Market format."
     )
 
