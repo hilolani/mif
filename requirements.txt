@@ -1,0 +1,5 @@
+numpy
+pandas
+scikit-learn
+networkx>=2.6
+importlib-resources; python_version < "3.9"
