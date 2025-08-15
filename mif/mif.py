@@ -4,7 +4,7 @@ import networkx as nx
 import math
 import itertools
 from scipy.io import mmread, mmwrite
-from scipy.sparse import csr_matrix,coo_matrix,isspmatrix_csr,isspmatrix_csc,isspmatrix_coo,csgraph
+from scipy.sparse import csr_matrix,coo_matrix,csc_matrix,issparse,isspmatrix_csr,isspmatrix_csc,isspmatrix_coo,csgraph
 from collections import defaultdict
 from sklearn.utils import Bunch
 try:
