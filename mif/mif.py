@@ -15,6 +15,7 @@ except ImportError:
     from importlib_resources import files
 from . import data  # mif/data/
 import shutil
+from math import isclose
 
 #If you use a Google Colab user, run the following.
 #from google.colab import drive
