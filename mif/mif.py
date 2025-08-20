@@ -16,6 +16,7 @@ except ImportError:
 from . import data  # mif/data/
 import shutil
 from math import isclose
+import logging
 
 #If you use a Google Colab user, run the following.
 #from google.colab import drive
