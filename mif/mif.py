@@ -42,7 +42,7 @@ def load_mif(return_X_y=False, as_frame=False, scaled=False):
         DESCR="This is a toy dataset consisting of six sparse matrices in Matrix Market format."
     )
 
-def adjanceyinfocheck(adjacencymatrix):
+def adjacencyinfocheck(adjacencymatrix):
     if isinstance(adjacencymatrix, np.ndarray):
         print("The graph is given as a dense matrix.")
         adj_matrix = csr_matrix(adjacencymatrix)
@@ -62,7 +62,7 @@ def MiF_ZeroBasedIndex(adjacencymatrix, x, y, beta, gamma):
     val = 0
     coefficientlist = list(CONST_COEFFICIENT_ARRAY)
     #print("Here, all integer values are assumed to be 0-based indexes, i.e. data and parameters --including node numbers and gamma-- that are counted starting from 0.In other words, it is assumed that a sparse matrix with a 0-based index created in C, C++, Python,etc. was input here.")
-    adj_matrix = adjanceyinfocheck(adjacencymatrix)
+    adj_matrix = adjacencyinfocheck(adjacencymatrix)
     alphalist = [(1 / coefficientlist[gamma]) ** (i + 1) for i in range(0, gamma + 1)]
     i = None
     tmat = {0: adj_matrix}
@@ -83,7 +83,7 @@ def MiF_OneBasedIndex(adjacencymatrix, x, y, beta, gamma):
     val = 0
     coefficientlist = list(CONST_COEFFICIENT_ARRAY)
     print("Here, all integer values are assumed to be 1-based indexes, i.e. data and parameters --including node numbers and gamma-- that are counted starting from 1.In other words, it is assumed that a sparse matrix with a 1-based index created in MATLAB, Mathematica, Julia, Fortran, R, etc. was input here.")
-    adj_matrix = adjanceyinfocheck(adjacencymatrix)
+    adj_matrix = adjacencyinfocheck(adjacencymatrix)
     alphalist = [(1 / coefficientlist[gamma - 1]) ** (i + 1) for i in range(0, gamma)]
     i = None
     tmat = {0: adj_matrix}
@@ -107,7 +107,7 @@ def MiF(adjacencymatrix, x, y, beta, gamma,index_base = 0):
         return MiF_OneBasedIndex(adjacencymatrix, x, y, beta, gamma)
 
 def MiF_broadcast_withloop(adjacencymatrix, startingvertex, beta = 0.5, gamma_threshold = 10):
-    adj_matrix = adjanceyinfocheck(adjacencymatrix)
+    adj_matrix = adjacencyinfocheck(adjacencymatrix)
     Gobj = nx.from_scipy_sparse_array(adj_matrix)
     degdicformat = nx.degree(Gobj)
     deglst =list([degdicformat[i] for i in range(0,len(degdicformat))])
@@ -132,7 +132,7 @@ def MiF_broadcast_withloop(adjacencymatrix, startingvertex, beta = 0.5, gamma_th
              break
 
 def MiF_broadcast_withoutloop(adjacencymatrix, startingvertex, beta = 0.5, gamma_threshold = 10):
-    adj_matrix = adjanceyinfocheck(adjacencymatrix)
+    adj_matrix = adjacencyinfocheck(adjacencymatrix)
     Gobj = nx.from_scipy_sparse_array(adj_matrix)
     degdicformat = nx.degree(Gobj)
     deglst =list([degdicformat[i] for i in range(0,len(degdicformat))])
@@ -178,7 +178,7 @@ def MiF_broadcast(adjacencymatrix, startingvertex, beta = 0.5, gamma_threshold =
         return MiF_broadcast_withloop(adjacencymatrix, startingvertex, beta, gamma_threshold)
 
 def MiFDI_withloop(adjacencymatrix, startingvertices = "min", beta = 0.2, gamma_threshold = 10):
-  adj_matrix = adjanceyinfocheck(adjacencymatrix)
+  adj_matrix = adjacencyinfocheck(adjacencymatrix)
   Gobj = nx.from_scipy_sparse_array(adj_matrix)
   degdicformat = nx.degree(Gobj)
   deglst =list([degdicformat[i] for i in range(0,len(degdicformat))])
