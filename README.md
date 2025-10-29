@@ -1,2 +1,4 @@
 # mif
 A repository for calculating MiF (Markov inverse F-measure) using Python. MiF is a sophisticated measure of similarity (distance) between nodes in complex networks , and its algorithm was proposed in Akama et al., 2015.
+
+This package proposes a new metric called the MiF Degradation Index, abbreviated as MiFDI. It involves selecting a specific vertex (node), such as the one with the smallest degree, and initiating a random walk from it. The random walk continues until all vertices (nodes) are reached, calculating and listing the MiF value between the specific starting vertex (node) and each reached vertex (node). In MiFDI, MiF values are recorded as logarithms, so they can be negative. At each step of the random walk, the average of log(MiF value) is output. You can choose whether to include or exclude self-loops. If excluded, the random walk stops at a node once it is reached and does not proceed further from that node.
