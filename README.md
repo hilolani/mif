@@ -6,3 +6,13 @@ cf. Hiroyuki Akama, Maki Miyake, Jaeyoung Jung, Brian Murphy, 2015. Using Graph 
 MiF calculates distances (similarity) between vertices (nodes) within complex networks, simultaneously incorporating and unifying two perspectives: co-occurrence-based (local co-occurrence) and geodesic-based (global-geodesic). The former quantifies local similarity between nodes, specifically the overlap between edges. Similar to the Jaccard coefficient and Simpson's coefficient, it calculates the overlap rate of paths connecting adjacent or proximate points. The latter considers the shortest path length, coding the distance between points such that the shorter the shortest path and the greater the number of paths taking the shortest path, the smaller the distance. The MiF value falls within the interval [0,1].
 
 This package proposes a new metric called the MiF Degradation Index, abbreviated as MiFDI. It involves selecting a specific vertex (node), such as the one with the smallest degree, and initiating a random walk from it. The random walk continues until all vertices (nodes) are reached, calculating and listing the MiF value between the specific starting vertex (node) and each reached vertex (node). In MiFDI, MiF values are recorded as logarithms, so they can be negative. At each step of the random walk, the average of log(MiF value) is output. You can choose whether to include or exclude self-loops. If excluded, the random walk stops at a node once it is reached and does not proceed further from that node.
+
+Several adjacent matrices for demonstration purposes are stored in this repository as Matrix Market mtx files and can be used for calculations as follows.
+
+from mif import *
+
+mif = load_mif()
+
+mtxlist = [re_mcl.gadget,re_mcl.karateclub,re_mcl.erdosReny,re_mcl.scalefree,re_mcl.homophilly,re_mcl.heterophilly,re_mcl.eat]
+
+[adjacencyinfocheck(i) for i in mtxlist]
