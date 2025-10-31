@@ -39,6 +39,7 @@ def load_mif(return_X_y=False, as_frame=False, scaled=False):
         homophilly = os.path.join(base_path, "homophilly.mtx"),
         karateclub = os.path.join(base_path, "karateclub.mtx"),
         scalefree = os.path.join(base_path, "scalefree.mtx"),
+        eat = os.path.join(base_path, "eat.mtx"),
         DESCR="This is a toy dataset consisting of six sparse matrices in Matrix Market format."
     )
 
