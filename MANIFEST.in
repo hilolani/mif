@@ -4,3 +4,4 @@ include mif/data/heterophilly.mtx
 include mif/data/homophilly.mtx
 include mif/data/karateclub.mtx
 include mif/data/scalefree.mtx
+include mif/data/eat.mtx
