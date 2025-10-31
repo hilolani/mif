@@ -5,3 +5,4 @@ include mif/data/homophilly.mtx
 include mif/data/karateclub.mtx
 include mif/data/scalefree.mtx
 include mif/data/eat.mtx
+include mif/data/eatwords.csv
