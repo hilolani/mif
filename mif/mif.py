@@ -4,7 +4,7 @@ import networkx as nx
 import math
 import itertools
 from scipy.io import mmread, mmwrite
-from scipy.sparse import csr_matrix,coo_matrix,csc_matrix,issparse,isspmatrix_csr,isspmatrix_csc,isspmatrix_coo,csgraph
+from scipy.sparse import csr_matrix,coo_matrix,csc_matrix,issparse,isspmatrix_csr,isspmatrix_csc,isspmatrix_coo,csgraph,lil_matrix,dok_matrix,dia_matrix,load_npz
 from collections import defaultdict
 from sklearn.utils import Bunch
 try:
@@ -17,6 +17,8 @@ from . import data  # mif/data/
 import shutil
 from math import isclose
 import logging
+import json
+import pickle
 
 #If you use a Google Colab user, run the following.
 #from google.colab import drive
@@ -43,7 +45,7 @@ def load_mif(return_X_y=False, as_frame=False, scaled=False):
         DESCR="This is a toy dataset consisting of six sparse matrices in Matrix Market format."
     )
 
-def adjacencyinfocheck(adjacencymatrix):
+def adjacencyinfocheck_old(adjacencymatrix):
     if isinstance(adjacencymatrix, np.ndarray):
         print("The graph is given as a dense matrix.")
         adj_matrix = csr_matrix(adjacencymatrix)
@@ -58,6 +60,71 @@ def adjacencyinfocheck(adjacencymatrix):
         return adj_matrix
     else:
         raise ValueError("Unsupported format or indexing. This function is designed to work with sparse matrix files created in languages that use 0-based indexing. If there is something wrong, check the indexing of your sparse matrix.")
+
+def adjacencyinfocheck(adjacencymatrix, logger=None):
+  path_or_matrix = adjacencymatrix
+  if isinstance(path_or_matrix, str) and os.path.exists(path_or_matrix):
+        path = path_or_matrix
+        ext = os.path.splitext(path)[1].lower()
+        if logger:
+            logger.info(f"Loading matrix from file: {path}")
+        if ext == ".mtx":
+            matrix = mmread(path).tocsr()
+            if logger: logger.info("Loaded .mtx file → CSR.")
+            return matrix
+        elif ext == ".npz":
+            loaded = np.load(path, allow_pickle=True)
+            if 'data' in loaded and 'indices' in loaded and 'indptr' in loaded:
+                matrix = load_npz(path).tocsr()
+                if logger: logger.info("Loaded sparse .npz file → CSR.")
+                return matrix
+            else:
+                matrix = csr_matrix(loaded['arr_0'])
+                if logger: logger.info("Loaded dense .npz file → CSR.")
+                return matrix
+        elif ext == ".pkl":
+            with open(path, "rb") as f:
+                obj = pickle.load(f)
+                return adjacencyinfocheck(obj, logger=logger)
+        elif ext == ".csv":
+            arr = np.loadtxt(path, delimiter=",")
+            matrix = csr_matrix(arr)
+            if logger: logger.info("Loaded .csv file → CSR.")
+            return matrix
+        elif ext == ".json":
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if all(k in data for k in ("row", "col", "data", "shape")):
+                row = np.array(data["row"], dtype=np.int64)
+                col = np.array(data["col"], dtype=np.int64)
+                vals = np.array(data["data"], dtype=np.float64)
+                shape = tuple(data["shape"])
+                matrix = coo_matrix((vals, (row, col)), shape=shape).tocsr()
+                if logger: logger.info("Loaded sparse JSON (COO format) → CSR.")
+                return matrix
+            else:
+                arr = np.array(data, dtype=np.float64)
+                matrix = csr_matrix(arr)
+                if logger: logger.info("Loaded dense JSON → CSR.")
+                return matrix
+        else:
+            msg = f"Unsupported file extension: {ext}"
+            if logger: logger.error(msg)
+            raise ValueError(msg)
+  matrix = path_or_matrix
+  if isinstance(matrix, csr_matrix):
+      if logger: logger.info("Matrix is already CSR format.")
+      return matrix
+  elif issparse(matrix):
+      if logger: logger.info(f"Converting {type(matrix).__name__} → CSR.")
+      return matrix.tocsr()
+  elif isinstance(matrix, np.ndarray):
+      if logger: logger.info("Converting ndarray → CSR.")
+      return csr_matrix(matrix)
+  else:
+      msg = f"Unsupported input type: {type(matrix)}"
+      if logger: logger.error(msg)
+      raise TypeError(msg)
 
 def MiF_ZeroBasedIndex(adjacencymatrix, x, y, beta, gamma):
     val = 0
