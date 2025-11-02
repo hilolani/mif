@@ -88,7 +88,7 @@ def adjacencyinfocheck(adjacencymatrix, logger=None):
   log = resolve_logger(logger, "matrix")
   print(f"log name: {log.name}")
   path_or_matrix = adjacencymatrix
-  log.info(f"Loading matrix from {adjacencymatrix}")
+  #log.info(f"Loading matrix from {adjacencymatrix}")
   if isinstance(path_or_matrix, str) and os.path.exists(path_or_matrix):
         path = path_or_matrix
         ext = os.path.splitext(path)[1].lower()
