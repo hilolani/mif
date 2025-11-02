@@ -199,7 +199,7 @@ def MiF_OneBasedIndex(adjacencymatrix, x, y, beta, gamma, logger=None):
             val += numerator / denominator
     return val
 
-def MiF(adjacencymatrix, x, y, beta, gamma,index_base = 0, 10, logger=None):
+def MiF(adjacencymatrix, x, y, beta, gamma,index_base = 0, gamma_threshold = 10, logger=None):
     log = resolve_logger(logger, "MiF")
     print(f"log name: {log.name}")
     if index_base == 0:
