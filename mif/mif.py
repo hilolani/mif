@@ -86,9 +86,7 @@ def load_mif(return_X_y=False, as_frame=False, scaled=False):
 
 def adjacencyinfocheck(adjacencymatrix, logger=None):
   log = resolve_logger(logger, "matrix")
-  #print(f"log is logger_b? {log is logger_b}")
   print(f"log name: {log.name}")
-  #print(f"handlers: {[h.baseFilename for h in log.handlers]}")
   path_or_matrix = adjacencymatrix
   log.info(f"Loading matrix from {adjacencymatrix}")
   if isinstance(path_or_matrix, str) and os.path.exists(path_or_matrix):
@@ -112,7 +110,7 @@ def adjacencyinfocheck(adjacencymatrix, logger=None):
         elif ext == ".pkl":
             with open(path, "rb") as f:
                 obj = pickle.load(f)
-                return adjacencyinfocheck(obj)
+                return adjacencyinfocheck(obj, log)
         elif ext == ".csv":
             arr = np.loadtxt(path, delimiter=",")
             matrix = csr_matrix(arr)
@@ -155,10 +153,12 @@ def adjacencyinfocheck(adjacencymatrix, logger=None):
   log.info("Matrix successfully loaded.")
 
 
-def MiF_ZeroBasedIndex(adjacencymatrix, x, y, beta, gamma):
+def MiF_ZeroBasedIndex(adjacencymatrix, x, y, beta, gamma, logger=None):
+    log = resolve_logger(logger, "MiF")
+    print(f"log name: {log.name}")
     val = 0
     coefficientlist = list(CONST_COEFFICIENT_ARRAY)
-    #print("Here, all integer values are assumed to be 0-based indexes, i.e. data and parameters --including node numbers and gamma-- that are counted starting from 0.In other words, it is assumed that a sparse matrix with a 0-based index created in C, C++, Python,etc. was input here.")
+    log.info(f"Here, all integer values are assumed to be 0-based indexes, i.e. data and parameters --including node numbers and gamma-- that are counted starting from 0.In other words, it is assumed that a sparse matrix with a 0-based index created in C, C++, Python,etc. was input here.")
     adj_matrix = adjacencyinfocheck(adjacencymatrix)
     alphalist = [(1 / coefficientlist[gamma]) ** (i + 1) for i in range(0, gamma + 1)]
     i = None
@@ -176,10 +176,12 @@ def MiF_ZeroBasedIndex(adjacencymatrix, x, y, beta, gamma):
             val += numerator / denominator
     return val
 
-def MiF_OneBasedIndex(adjacencymatrix, x, y, beta, gamma):
+def MiF_OneBasedIndex(adjacencymatrix, x, y, beta, gamma, logger=None):
+    log = resolve_logger(logger, "MiF")
+    print(f"log name: {log.name}")
     val = 0
     coefficientlist = list(CONST_COEFFICIENT_ARRAY)
-    print("Here, all integer values are assumed to be 1-based indexes, i.e. data and parameters --including node numbers and gamma-- that are counted starting from 1.In other words, it is assumed that a sparse matrix with a 1-based index created in MATLAB, Mathematica, Julia, Fortran, R, etc. was input here.")
+    log.info(f"Here, all integer values are assumed to be 1-based indexes, i.e. data and parameters --including node numbers and gamma-- that are counted starting from 1.In other words, it is assumed that a sparse matrix with a 1-based index created in MATLAB, Mathematica, Julia, Fortran, R, etc. was input here.")
     adj_matrix = adjacencyinfocheck(adjacencymatrix)
     alphalist = [(1 / coefficientlist[gamma - 1]) ** (i + 1) for i in range(0, gamma)]
     i = None
@@ -203,7 +205,9 @@ def MiF(adjacencymatrix, x, y, beta, gamma,index_base = 0):
     elif index_base == 1:
         return MiF_OneBasedIndex(adjacencymatrix, x, y, beta, gamma)
 
-def MiF_broadcast_withloop(adjacencymatrix, startingvertex, beta = 0.5, gamma_threshold = 10):
+def MiF_broadcast_withloop(adjacencymatrix, startingvertex, beta = 0.5, gamma_threshold = 10, logger=None):
+    log = resolve_logger(logger, "MiF")
+    print(f"log name: {log.name}")
     adj_matrix = adjacencyinfocheck(adjacencymatrix)
     Gobj = nx.from_scipy_sparse_array(adj_matrix)
     degdicformat = nx.degree(Gobj)
@@ -211,9 +215,9 @@ def MiF_broadcast_withloop(adjacencymatrix, startingvertex, beta = 0.5, gamma_th
     print(len(deglst))
     alllistednodes = range(0,len(degdicformat))
     if int(startingvertex) > len(deglst):
-       print("The starting node does not exist.")
+       log.info(f"The starting node does not exist.")
     elif deglst[startingvertex] == 0:
-       print("The starting node is isolated.")
+       log.info(f"The starting node is isolated.")
     else:
        targettednodes = [i for i in alllistednodes if i not in [startingvertex]]
        gammaval = 0
@@ -221,14 +225,15 @@ def MiF_broadcast_withloop(adjacencymatrix, startingvertex, beta = 0.5, gamma_th
           mifsteps = [[startingvertex, MiF(adj_matrix, startingvertex, j, beta, gammaval)] for j in targettednodes]
           reached = [[x, i] for i, x in enumerate(mifsteps) if x [1]!= np.float64(0.0)]
           resultinfo_tmp =  [[i[0][0], i[1], i[0][1]] for i in reached]
-          #print(f"Current gamma: {gammaval}, [Starting node, Reached node, MiF]: {resultinfo_tmp}")
           gammaval = gammaval + 1
           if len(mifsteps) == len(reached):
-             print(f"Gamma reached the maximum values, since all the nodes have been reached from the starting nodes.")
+             log.info(f"Gamma reached the maximum values, since all the nodes have been reached from the starting nodes.")
              return resultinfo_tmp
              break
 
-def MiF_broadcast_withoutloop(adjacencymatrix, startingvertex, beta = 0.5, gamma_threshold = 10):
+def MiF_broadcast_withoutloop(adjacencymatrix, startingvertex, beta = 0.5, gamma_threshold = 10, logger=None):
+    log = resolve_logger(logger, "MiF")
+    print(f"log name: {log.name}")
     adj_matrix = adjacencyinfocheck(adjacencymatrix)
     Gobj = nx.from_scipy_sparse_array(adj_matrix)
     degdicformat = nx.degree(Gobj)
@@ -236,9 +241,9 @@ def MiF_broadcast_withoutloop(adjacencymatrix, startingvertex, beta = 0.5, gamma
     print(len(deglst))
     alllistednodes = range(0,len(degdicformat))
     if int(startingvertex) > len(deglst):
-       print("The starting node does not exist.")
+       log.info(f"The starting node does not exist.")
     elif deglst[startingvertex] == 0:
-       print("The starting node is isolated.")
+       log.info(f"The starting node is isolated.")
     else:
        targettednodes = [i for i in alllistednodes if i not in [startingvertex]]
        gammaval = 0
@@ -251,30 +256,32 @@ def MiF_broadcast_withoutloop(adjacencymatrix, startingvertex, beta = 0.5, gamma
            reachednodesfromeachstartingnode = []
            mifsteps = [[startingvertex, j, MiF(adj_matrix, startingvertex, j, beta, gammaval)] for j in targettednodes]
            reached = [x for i, x in enumerate(mifsteps) if x[2]!= np.float64(0.0)]
-           print(reached)
+           log.info(f"reached: {reached}")
            reachednodes = [x[1] for i, x in enumerate(reached)]
-           print(f"list of nodes that, once reached, should be skipped without going any further, i.e. reachednodes: {reachednodes}")
+           log.info(f"list of nodes that, once reached, should be skipped without going any further, i.e. reachednodes: {reachednodes}")
            reachedlist.append(reachednodes)
-           print(reachedlist)
+           log.info(f"reachedlist: {reachedlist}")
            print("")
            remainingnodes = [x for i, x in enumerate(remainingnodes) if x not in list(itertools.chain.from_iterable(reachedlist))]
-           print(f"list of nodes that remain to be reached, i.e. remainingnodes: {remainingnodes}")
+           log.info(f"list of nodes that remain to be reached, i.e. remainingnodes: {remainingnodes}")
            gammaval += 1
            reachedlist = []
            reachednodevalslist = reachednodevalslist + reached
            print("")
            if len(remainingnodes) == 0:
-               print(f"Gamma reached the maximum values, since all the nodes have been reached from the starting nodes.")
+               log.info(f"Gamma reached the maximum values, since all the nodes have been reached from the starting nodes.")
                return reached
                break
 
-def MiF_broadcast(adjacencymatrix, startingvertex, beta = 0.5, gamma_threshold = 10, loop = 0):
+def MiF_broadcast(adjacencymatrix, startingvertex, beta = 0.5, gamma_threshold = 10, loop = 0,logger=None):
     if loop == 0:
         return MiF_broadcast_withoutloop(adjacencymatrix, startingvertex, beta, gamma_threshold)
     elif loop == 1:
         return MiF_broadcast_withloop(adjacencymatrix, startingvertex, beta, gamma_threshold)
 
-def MiFDI_withloop(adjacencymatrix, startingvertices = "min", beta = 0.2, gamma_threshold = 10):
+def MiFDI_withloop(adjacencymatrix, startingvertices = "min", beta = 0.2, gamma_threshold = 10, logger=None):
+  log = resolve_logger(logger, "MiF")
+  print(f"log name: {log.name}")
   adj_matrix = adjacencyinfocheck(adjacencymatrix)
   Gobj = nx.from_scipy_sparse_array(adj_matrix)
   degdicformat = nx.degree(Gobj)
@@ -283,16 +290,16 @@ def MiFDI_withloop(adjacencymatrix, startingvertices = "min", beta = 0.2, gamma_
   if startingvertices == "min":
       smallestdegval = min(deglst)
       mindegnodes = [i for i, x in enumerate(deglst) if x == min(deglst)]
-      print(f"the smallest degree: {smallestdegval}")
-      print(f"the node numbers with the smallest degree : {mindegnodes}")
+      log.info(f"the smallest degree: {smallestdegval}")
+      log.info(f"the node numbers with the smallest degree : {mindegnodes}")
       print("")
       targettednodes = [i for i in alllistednodes if i not in mindegnodes]
       startingnodes = mindegnodes
   elif startingvertices == "max":
       largestdegval = max(deglst)
       maxdegnodes = [i for i, x in enumerate(deglst) if x == max(deglst)]
-      print(f"the largest degree: {largestdegval}")
-      print(f"the node numbers with the largest degree : {maxdegnodes}")
+      log.info(f"the largest degree: {largestdegval}")
+      log.info(f"the node numbers with the largest degree : {maxdegnodes}")
       print("")
       targettednodes = [i for i in alllistednodes if i not in maxdegnodes]
       startingnodes = maxdegnodes
@@ -303,34 +310,30 @@ def MiFDI_withloop(adjacencymatrix, startingvertices = "min", beta = 0.2, gamma_
       reached = [[x, i] for i, x in enumerate(mifsteps) if x [1]!= np.float64(0.0)]
       logresultinfo_tmp =  [[i[0][0], i[1], math.log(i[0][1])] for i in reached]
       logresultinfo = [[x[0], x[1] - startingnodes.index(x[0]) *  len(targettednodes), x[2]] for i, x in enumerate(logresultinfo_tmp)]
-      print(f"Current gamma: {gammaval}, [Starting node, Reached node, Log(MiF)]: {logresultinfo}")
+      log.info(f"Current gamma: {gammaval}, [Starting node, Reached node, Log(MiF)]: {logresultinfo}")
       meanlog =  np.mean([logresultinfo[l][2] for l in range(len(logresultinfo))])
-      print(f"Current gamma: {gammaval}, Mean of the Log(MiF): {meanlog}")
+      log.info(f"Current gamma: {gammaval}, Mean of the Log(MiF): {meanlog}")
       print("")
       logmifmeanlist.append(meanlog)
       gammaval = gammaval + 1
       if len(mifsteps) == len(reached):
-         print(f"Gamma reached the maximum values, since all the nodes have been reached from the starting nodes.")
+         log.info(f"Gamma reached the maximum values, since all the nodes have been reached from the starting nodes.")
          break
   mifdi = sum(logmifmeanlist)
-  print(f"MiFDI value: {mifdi}")
+  log.info(f"MiFDI value: {mifdi}")
 
 
-def MiFDI_withoutloop(adjacencymatrix, startingvertices = "min", beta = 0.2, gamma_threshold = 10):
-   if isinstance(adjacencymatrix, np.ndarray):
-     adj_matrix = csr_matrix(adjacencymatrix)
-   elif isspmatrix_csr(adjacencymatrix):
-     print("Make sure your csr sparse matrix was given with 0-based indexing.")
-     adj_matrix = adjacencymatrix
-   elif adjacencymatrix.endswith(".mtx"):
-     adj_matrix = mmread(adjacencymatrix).tocsr()
+def MiFDI_withoutloop(adjacencymatrix, startingvertices = "min", beta = 0.2, gamma_threshold = 10, logger=None):
+   log = resolve_logger(logger, "MiF")
+   print(f"log name: {log.name}")
+   adj_matrix = adjacencyinfocheck(adjacencymatrix)
    Gobj = nx.from_scipy_sparse_array(adj_matrix)
    degdicformat = nx.degree(Gobj)
    deglst =list([degdicformat[i] for i in range(0,len(degdicformat))])
    smallestdegval = min(deglst)
    mindegnodes = [i for i, x in enumerate(deglst) if x == min(deglst)]
-   print(f"the smallest degree: {smallestdegval}")
-   print(f"the node numbers with the smallest degree : {mindegnodes}")
+   log.info(f"the smallest degree: {smallestdegval}")
+   log.info(f"the node numbers with the smallest degree : {mindegnodes}")
    print("")
    alllistednodes = range(0,len(degdicformat))
    targettednodes = [i for i in alllistednodes if i not in mindegnodes]
@@ -347,7 +350,7 @@ def MiFDI_withoutloop(adjacencymatrix, startingvertices = "min", beta = 0.2, gam
             mifsteps = [[mindegnodes[i], j, MiF(adj_matrix, mindegnodes[i], j, beta, gammaval)] for j in remainingnodes]
             reached = [x for i, x in enumerate(mifsteps) if x[2]!= np.float64(0.0)]
             logresultinfo =  [[k[0], k[1], math.log(k[2])] for k in reached]
-            print(f"Current gamma: {gammaval}, [Starting node, Reached node, Log(MiF)]: {logresultinfo}")
+            log.info(f"Current gamma: {gammaval}, [Starting node, Reached node, Log(MiF)]: {logresultinfo}")
             logvals = [x[2] for i, x in enumerate(logresultinfo)]
             logmiflist.append(logvals)
             reachednodes = [x[1] for i, x in enumerate(logresultinfo)]
@@ -358,9 +361,9 @@ def MiFDI_withoutloop(adjacencymatrix, startingvertices = "min", beta = 0.2, gam
             reachednodesfromminnodes.append(reachedinfo)
             print("")
        reachednodesskip = list(set(list(itertools.chain.from_iterable(reachednodesfromminnodes))))
-       print(f"list of nodes that, once reached, should be skipped without going any further, i.e. reachednodesskip: {reachednodesskip}")
+       log.info(f"list of nodes that, once reached, should be skipped without going any further, i.e. reachednodesskip: {reachednodesskip}")
        remainingnodes = [x for i, x in enumerate(remainingnodes) if x not in reachednodesskip]
-       print(f"list of nodes that remain to be reached, i.e. remainingnodes: {remainingnodes}")
+       log.info(f"list of nodes that remain to be reached, i.e. remainingnodes: {remainingnodes}")
        logmiflisteachgamma =list(itertools.chain.from_iterable(logmiflist))
        reachedlisteachgamma =list(itertools.chain.from_iterable(reachedlist))
        reachednodevals = [[reachedlisteachgamma[i],logmiflisteachgamma[i]] for i in range(0, len(logmiflisteachgamma))]
@@ -370,7 +373,7 @@ def MiFDI_withoutloop(adjacencymatrix, startingvertices = "min", beta = 0.2, gam
        reachednodevalslist = reachednodevalslist + reachednodevals
        print("")
        if len(remainingnodes) == 0:
-          print(f"Gamma reached the maximum values, since all the nodes have been reached from the starting nodes.")
+          log.info(f"Gamma reached the maximum values, since all the nodes have been reached from the starting nodes.")
           break
    result_tmp = sorted(reachednodevalslist, key=lambda x: x[0])
    grouped = defaultdict(list)
@@ -380,10 +383,10 @@ def MiFDI_withoutloop(adjacencymatrix, startingvertices = "min", beta = 0.2, gam
    allresult = result + [[mindegnodes[i], 0] for i in range(0, len(mindegnodes))]
    allresult = sorted(allresult, key=lambda x: x[0])
    print("")
-   print(f"allresult: {allresult}")
+   log.info(f"allresult: {allresult}")
    mifval = [x[1] for i, x in enumerate(allresult) if x[1] != 0]
    mifdi = np.mean(mifval)
-   print(f"MiFDI value: {mifdi}")
+   log.info(f"MiFDI value: {mifdi}")
    return allresult, mifdi
 
 
