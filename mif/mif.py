@@ -57,6 +57,18 @@ logger_b.addHandler(fh_b)
 logger_b.addHandler(ch_b)
 logger_b.propagate = False
 
+logger_c = logging.getLogger("re_mcl")
+logger_c.setLevel(logging.INFO)
+
+fh_c = logging.FileHandler("re_mcl.log", mode="w", encoding="utf-8")
+fh_c.setFormatter(formatter)
+ch_c = logging.StreamHandler(sys.stdout)
+ch_c.setFormatter(formatter)
+
+logger_c.addHandler(fh_c)
+logger_c.addHandler(ch_c)
+logger_c.propagate = False
+
 def resolve_logger(logger: Optional[logging.Logger], context: str) -> logging.Logger:
     return logger if logger is not None else get_logger(context)
 
@@ -66,6 +78,8 @@ def get_logger(context: str) -> logging.Logger:
         return logger_a
     elif context in ("matrix", "loader", "io"):
         return logger_b
+    elif context in ("mcl", "re_mcl", "rmcl"):
+        return logger_c    
     else:
         raise ValueError(f"Unknown logging context: {context}")
 
