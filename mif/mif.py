@@ -150,9 +150,11 @@ def adjacencyinfocheck(adjacencymatrix, logger = None):
           log.info(f"Matrix is already CSR format (shape={matrix.shape}, nnz={matrix.nnz})")
           
         elif issparse(matrix):
+          matrix = csr_matrix(matrix)  
           log.info(f"Converting {type(matrix).__name__} to CSR format (shape={matrix.shape}, nnz={matrix.nnz})")
          
         elif isinstance(matrix, np.ndarray):
+          matrix = csr_matrix(matrix)    
           log.info(f"Converting dense ndarray to CSR format (shape={matrix.shape})")
           
         else:
