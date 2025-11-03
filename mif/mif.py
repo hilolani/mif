@@ -88,7 +88,7 @@ class SafeCSR(csr_matrix):
     def __repr__(self):
         return f"<SafeCSR shape={self.shape}, nnz={self.nnz}, dtype={self.dtype}>"
 
-    __str__ = __repr
+    __str__ = __repr__ 
 
 def adjacencyinfocheck(adjacencymatrix, logger = None):
     log = resolve_logger(logger, "matrix")
