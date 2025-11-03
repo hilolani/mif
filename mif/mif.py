@@ -84,38 +84,45 @@ def load_mif(return_X_y=False, as_frame=False, scaled=False):
         DESCR="This is a toy dataset consisting of six sparse matrices in Matrix Market format."
     )
 
-def adjacencyinfocheck(adjacencymatrix, logger=None):
-  log = resolve_logger(logger, "matrix")
-  print(f"log name: {log.name}")
-  path_or_matrix = adjacencymatrix
-  #log.info(f"Loading matrix from {adjacencymatrix}")
-  if isinstance(path_or_matrix, str) and os.path.exists(path_or_matrix):
+class SafeCSR(csr_matrix):
+    def __repr__(self):
+        return f"<SafeCSR shape={self.shape}, nnz={self.nnz}, dtype={self.dtype}>"
+
+    __str__ = __repr
+
+def adjacencyinfocheck(adjacencymatrix, logger = None):
+    log = resolve_logger(logger, "matrix")
+    print(f"log name: {log.name}")
+    path_or_matrix = adjacencymatrix
+    src = path_or_matrix if isinstance(path_or_matrix, str) else "<in-memory>"
+    
+    if isinstance(path_or_matrix, str) and os.path.exists(path_or_matrix):
         path = path_or_matrix
         ext = os.path.splitext(path)[1].lower()
-        log.info(f"Loading matrix from file: {path}")
+
         if ext == ".mtx":
             matrix = mmread(path).tocsr()
             log.info("Loaded .mtx file → CSR.")
-            return matrix
+
         elif ext == ".npz":
             loaded = np.load(path, allow_pickle=True)
             if 'data' in loaded and 'indices' in loaded and 'indptr' in loaded:
                 matrix = load_npz(path).tocsr()
-                log.info("Loaded sparse .npz file → CSR.")
-                return matrix
+                log.info("Loaded sparse .npz file → CSR.") 
             else:
                 matrix = csr_matrix(loaded['arr_0'])
                 log.info("Loaded dense .npz file → CSR.")
-                return matrix
+                
         elif ext == ".pkl":
             with open(path, "rb") as f:
                 obj = pickle.load(f)
-                return adjacencyinfocheck(obj, log)
+                matrix =adjacencyinfocheck(obj)
+                
         elif ext == ".csv":
             arr = np.loadtxt(path, delimiter=",")
             matrix = csr_matrix(arr)
             log.info("Loaded .csv file → CSR.")
-            return matrix
+            
         elif ext == ".json":
             with open(path, "r", encoding="utf-8") as f:
                 data = json.load(f)
@@ -126,31 +133,35 @@ def adjacencyinfocheck(adjacencymatrix, logger=None):
                 shape = tuple(data["shape"])
                 matrix = coo_matrix((vals, (row, col)), shape=shape).tocsr()
                 log.info("Loaded sparse JSON (COO format) → CSR.")
-                return matrix
             else:
                 arr = np.array(data, dtype=np.float64)
                 matrix = csr_matrix(arr)
                 log.info("Loaded dense JSON → CSR.")
-                return matrix
+                
         else:
             msg = f"Unsupported file extension: {ext}"
             log.error(msg)
             raise ValueError(msg)
-  matrix = path_or_matrix
-  if isinstance(matrix, csr_matrix):
-      log.info("Matrix is already CSR format.")
-      return matrix
-  elif issparse(matrix):
-      log.info(f"Converting {type(matrix).__name__} → CSR.")
-      return matrix.tocsr()
-  elif isinstance(matrix, np.ndarray):
-      log.info("Converting ndarray → CSR.")
-      return csr_matrix(matrix)
-  else:
-      msg = f"Unsupported input type: {type(matrix)}"
-      log.error(msg)
-      raise TypeError(msg)
-  log.info("Matrix successfully loaded.")
+
+    else:
+        matrix = path_or_matrix
+
+        if isinstance(matrix, csr_matrix):
+          log.info(f"Matrix is already CSR format (shape={matrix.shape}, nnz={matrix.nnz})")
+          
+        elif issparse(matrix):
+          log.info(f"Converting {type(matrix).__name__} to CSR format (shape={matrix.shape}, nnz={matrix.nnz})")
+         
+        elif isinstance(matrix, np.ndarray):
+          log.info(f"Converting dense ndarray to CSR format (shape={matrix.shape})")
+          
+        else:
+          msg = f"Unsupported input type: {type(matrix)}"
+          log.error(msg)
+          raise TypeError(msg)
+
+    log.info(f"Matrix loaded successfully (type={type(matrix).__name__}, shape={matrix.shape}, nnz={matrix.nnz})") 
+    return SafeCSR(matrix)
 
 
 def MiF_ZeroBasedIndex(adjacencymatrixchecked, x, y, beta, gamma, logger=None):
