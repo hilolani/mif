@@ -13,6 +13,8 @@ Several adjacent matrices for demonstration purposes are stored in this reposito
 
 The MiF_broadcast() function calculates the MiF value between the starting vertex (specified by the first argument) and each reached vertex, within a default range of 10 steps. It uses the adjacency matrix converted to a CSR sparse matrix (first argument) and uses the vertex specified by the second argument as the starting point. The beta value is set to 0.5 by default in the third argument. The fourth argument, loop, is set to 0 by default. This means the random walk does not continue beyond the reached vertex, so no self-loop occurs there. Setting the fourth argument to 1 allows the random walk to continue from a vertex once it has been reached.
 
+The MiFDI() function calculates the MiFDI values between the starting vertex (specified by the first argument) and each vertex reached, using the adjacent matrix converted to a csr sparse matrix (first argument). By default, it operates within a range of 10 steps. By default, the starting point is set to the vertex with the lowest degree, but the vertex with the highest degree can also be selected by specifying “max”. Note that the beta value for this function is set to 0.2 by default. The handling of the fourth argument, loop, is the same as for the MiF_broadcast() function.
+
     from mif import *
 
     mif = load_mif()
