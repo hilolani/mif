@@ -11,6 +11,8 @@ This package proposes a new metric called the MiF Degradation Index, abbreviated
 
 Several adjacent matrices for demonstration purposes are stored in this repository as Matrix Market mtx files and can be used for calculations as follows.
 
+The MiF_broadcast() function calculates the MiF value between the starting vertex (specified by the first argument) and each reached vertex, within a default range of 10 steps. It uses the adjacency matrix converted to a CSR sparse matrix (first argument) and uses the vertex specified by the second argument as the starting point. The beta value is set to 0.5 by default in the third argument. The fourth argument, loop, is set to 0 by default. This means the random walk does not continue beyond the reached vertex, so no self-loop occurs there. Setting the fourth argument to 1 allows the random walk to continue from a vertex once it has been reached.
+
     from mif import *
 
     mif = load_mif()
