@@ -327,7 +327,6 @@ def MiF_broadcast_diff_on_loop_tmp(result_withloop, result_withoutloop, logger=N
             log.error(f"The key differs in index {i}. No symmetrical comparison is possible.")
             continue
         if not np.isclose(row0[2], row1[2]):
-            print("OK")
             diff_positions.append({
                 'vertex pair': row0[:2],
                 'withloop_value': row0[2],
