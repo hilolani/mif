@@ -106,7 +106,7 @@ class SafeCSR(csr_matrix):
 
 def adjacencyinfocheck(adjacencymatrix, logger = None):
     log = resolve_logger(logger, "matrix")
-    print(f"log name: {log.name}")
+    #print(f"log name: {log.name}")
     path_or_matrix = adjacencymatrix
     src = path_or_matrix if isinstance(path_or_matrix, str) else "<in-memory>"
     
@@ -182,7 +182,7 @@ def adjacencyinfocheck(adjacencymatrix, logger = None):
 
 def MiF_ZeroBasedIndex(adjacencymatrixchecked, x, y, beta, gamma, logger=None):
     log = resolve_logger(logger, "MiF")
-    print(f"log name: {log.name}")
+    #print(f"log name: {log.name}")
     val = 0
     coefficientlist = list(CONST_COEFFICIENT_ARRAY)
     #log.info(f"Here, all integer values are assumed to be 0-based indexes, i.e. data and parameters --including node numbers and gamma-- that are counted starting from 0.In other words, it is assumed that a sparse matrix with a 0-based index created in C, C++, Python,etc. was input here.")
@@ -205,7 +205,7 @@ def MiF_ZeroBasedIndex(adjacencymatrixchecked, x, y, beta, gamma, logger=None):
 
 def MiF_OneBasedIndex(adjacencymatrixchecked, x, y, beta, gamma, logger=None):
     log = resolve_logger(logger, "MiF")
-    print(f"log name: {log.name}")
+    #print(f"log name: {log.name}")
     val = 0
     coefficientlist = list(CONST_COEFFICIENT_ARRAY)
     log.info(f"Here, all integer values are assumed to be 1-based indexes, i.e. data and parameters --including node numbers and gamma-- that are counted starting from 1.In other words, it is assumed that a sparse matrix with a 1-based index created in MATLAB, Mathematica, Julia, Fortran, R, etc. was input here.")
@@ -228,7 +228,7 @@ def MiF_OneBasedIndex(adjacencymatrixchecked, x, y, beta, gamma, logger=None):
 
 def MiF(adjacencymatrixchecked, x, y, beta, gamma,index_base = 0, gamma_threshold = 10, logger=None):
     log = resolve_logger(logger, "MiF")
-    print(f"log name: {log.name}")
+    #print(f"log name: {log.name}")
     if index_base == 0:
         return MiF_ZeroBasedIndex(adjacencymatrixchecked, x, y, beta, gamma,logger)
     elif index_base == 1:
@@ -236,7 +236,7 @@ def MiF(adjacencymatrixchecked, x, y, beta, gamma,index_base = 0, gamma_threshol
 
 def MiF_broadcast_withloop(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_threshold = 10, logger=None):
     log = resolve_logger(logger, "MiF")
-    print(f"log name: {log.name}")
+    #print(f"log name: {log.name}")
     adj_matrix = adjacencymatrixchecked
     Gobj = nx.from_scipy_sparse_array(adj_matrix)
     degdicformat = nx.degree(Gobj)
@@ -262,7 +262,7 @@ def MiF_broadcast_withloop(adjacencymatrixchecked, startingvertex, beta = 0.5, g
 
 def MiF_broadcast_withoutloop(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_threshold = 10, logger=None):
     log = resolve_logger(logger, "MiF")
-    print(f"log name: {log.name}")
+    #print(f"log name: {log.name}")
     adj_matrix = adjacencymatrixchecked
     Gobj = nx.from_scipy_sparse_array(adj_matrix)
     degdicformat = nx.degree(Gobj)
@@ -302,7 +302,7 @@ def MiF_broadcast_withoutloop(adjacencymatrixchecked, startingvertex, beta = 0.5
 
 def MiF_broadcast(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_threshold = 10, loop = 0,logger=None):
     log = resolve_logger(logger, "MiF")
-    print(f"log name: {log.name}")
+    #print(f"log name: {log.name}")
     if loop == 0:
         return MiF_broadcast_withoutloop(adjacencymatrixchecked, startingvertex, beta, gamma_threshold,logger)
     elif loop == 1:
@@ -310,7 +310,7 @@ def MiF_broadcast(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_thre
 
 def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", beta = 0.2, gamma_threshold = 10, logger=None):
   log = resolve_logger(logger, "MiF")
-  print(f"log name: {log.name}")
+  #print(f"log name: {log.name}")
   adj_matrix = adjacencymatrixchecked
   Gobj = nx.from_scipy_sparse_array(adj_matrix)
   degdicformat = nx.degree(Gobj)
@@ -351,7 +351,7 @@ def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", beta = 0.2,
 
 def MiFDI_withoutloop(adjacencymatrixchecked, startingvertices = "min", beta = 0.2, gamma_threshold = 10, logger=None):
    log = resolve_logger(logger, "MiF")
-   print(f"log name: {log.name}")
+   #print(f"log name: {log.name}")
    adj_matrix = adjacencymatrixchecked
    Gobj = nx.from_scipy_sparse_array(adj_matrix)
    degdicformat = nx.degree(Gobj)
@@ -414,7 +414,7 @@ def MiFDI_withoutloop(adjacencymatrixchecked, startingvertices = "min", beta = 0
 
 def MiFDI(adjacencymatrixchecked, startingvertices="min", beta = 0.2, gamma_threshold = 10, loop = 0, logger=None):
     log = resolve_logger(logger, "MiF")
-    print(f"log name: {log.name}")
+    #print(f"log name: {log.name}")
     if loop == 0:
         return MiFDI_withoutloop(adjacencymatrixchecked, startingvertices, beta, gamma_threshold,logger)
     elif loop == 1:
