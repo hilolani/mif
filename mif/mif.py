@@ -235,8 +235,9 @@ def MiF(adjacencymatrixchecked, x, y, beta, gamma,index_base = 0, gamma_threshol
         return MiF_OneBasedIndex(adjacencymatrixchecked, x, y, beta, gamma,logger)
 
 def MiF_broadcast_withloop(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_threshold = 10, logger=None):
+    np.set_printoptions(precision=10, floatmode='fixed')
     log = resolve_logger(logger, "MiF")
-    #print(f"log name: {log.name}")
+    print(f"log name: {log.name}")
     adj_matrix = adjacencymatrixchecked
     Gobj = nx.from_scipy_sparse_array(adj_matrix)
     degdicformat = nx.degree(Gobj)
@@ -249,15 +250,21 @@ def MiF_broadcast_withloop(adjacencymatrixchecked, startingvertex, beta = 0.5, g
        log.info(f"The starting node is isolated.")
     else:
        targettednodes = [i for i in alllistednodes if i not in [startingvertex]]
+       log.info(f"Starting node to be off target: {startingvertex}")
+       log.info(f"List of target nodes: {targettednodes}")
        gammaval = 0
        while gammaval < gamma_threshold:
           mifsteps = [[startingvertex, MiF(adj_matrix, startingvertex, j, beta, gammaval)] for j in targettednodes]
-          reached = [[x, i] for i, x in enumerate(mifsteps) if x [1]!= np.float64(0.0)]
-          resultinfo_tmp =  [[i[0][0], i[1], i[0][1]] for i in reached]
+          all_targets = range(len(deglst))  
+          other_targets = [t for t in all_targets if t != startingvertex]  
+          reached = [[startingvertex, target_id, val] for target_id, (_, val) in zip(other_targets, mifsteps) if val != 0.0]
+          log.info(f"The  number of reached nodes: {len(reached)}")
+          log.info(f"Reached vertices information: {reached}")
           gammaval = gammaval + 1
+          print(f"gammaval: {gammaval}")
           if len(mifsteps) == len(reached):
              log.info(f"Gamma reached the maximum values, since all the nodes have been reached from the starting nodes.")
-             return resultinfo_tmp
+             return reached
              break
 
 def MiF_broadcast_withoutloop(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_threshold = 10, logger=None):
@@ -302,7 +309,7 @@ def MiF_broadcast_withoutloop(adjacencymatrixchecked, startingvertex, beta = 0.5
 
 def MiF_broadcast(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_threshold = 10, loop = 0,logger=None):
     log = resolve_logger(logger, "MiF")
-    #print(f"log name: {log.name}")
+    print(f"log name: {log.name}")
     if loop == 0:
         return MiF_broadcast_withoutloop(adjacencymatrixchecked, startingvertex, beta, gamma_threshold,logger)
     elif loop == 1:
@@ -310,7 +317,7 @@ def MiF_broadcast(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_thre
 
 def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", beta = 0.2, gamma_threshold = 10, logger=None):
   log = resolve_logger(logger, "MiF")
-  #print(f"log name: {log.name}")
+  print(f"log name: {log.name}")
   adj_matrix = adjacencymatrixchecked
   Gobj = nx.from_scipy_sparse_array(adj_matrix)
   degdicformat = nx.degree(Gobj)
@@ -351,7 +358,7 @@ def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", beta = 0.2,
 
 def MiFDI_withoutloop(adjacencymatrixchecked, startingvertices = "min", beta = 0.2, gamma_threshold = 10, logger=None):
    log = resolve_logger(logger, "MiF")
-   #print(f"log name: {log.name}")
+   print(f"log name: {log.name}")
    adj_matrix = adjacencymatrixchecked
    Gobj = nx.from_scipy_sparse_array(adj_matrix)
    degdicformat = nx.degree(Gobj)
@@ -414,7 +421,7 @@ def MiFDI_withoutloop(adjacencymatrixchecked, startingvertices = "min", beta = 0
 
 def MiFDI(adjacencymatrixchecked, startingvertices="min", beta = 0.2, gamma_threshold = 10, loop = 0, logger=None):
     log = resolve_logger(logger, "MiF")
-    #print(f"log name: {log.name}")
+    print(f"log name: {log.name}")
     if loop == 0:
         return MiFDI_withoutloop(adjacencymatrixchecked, startingvertices, beta, gamma_threshold,logger)
     elif loop == 1:
