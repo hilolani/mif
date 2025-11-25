@@ -267,7 +267,7 @@ def MiF_broadcast_withloop(adjacencymatrixchecked, startingvertex, beta = 0.5, g
              return reached
              break
 
-def MiF_broadcast_withoutloop(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_threshold = 10, logger=None):
+def MiF_broadcast_withoutloop_tmp(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_threshold = 10, logger=None):
     log = resolve_logger(logger, "MiF")
     #print(f"log name: {log.name}")
     adj_matrix = adjacencymatrixchecked
@@ -284,19 +284,21 @@ def MiF_broadcast_withoutloop(adjacencymatrixchecked, startingvertex, beta = 0.5
        targettednodes = [i for i in alllistednodes if i not in [startingvertex]]
        gammaval = 0
        reachedlist =[]
-       reachedlist =[]
+       reachedinfolist =[]#new
        reachednodevalslist = []
        remainingnodes = targettednodes
        while gammaval < gamma_threshold:
            reachednodesfromstartingnodes = []
            reachednodesfromeachstartingnode = []
-           mifsteps = [[startingvertex, j, MiF(adj_matrix, startingvertex, j, beta, gammaval)] for j in targettednodes]
+           mifsteps = [[startingvertex, j, MiF(adj_matrix, startingvertex, j, beta, gammaval)] for j in remainingnodes]
            reached = [x for i, x in enumerate(mifsteps) if x[2]!= np.float64(0.0)]
            log.info(f"reached: {reached}")
+           reachedinfolist.append(reached)
            reachednodes = [x[1] for i, x in enumerate(reached)]
            log.info(f"list of nodes that, once reached, should be skipped without going any further, i.e. reachednodes: {reachednodes}")
            reachedlist.append(reachednodes)
            log.info(f"reachedlist: {reachedlist}")
+           log.info(f"reachedinfolist: {reachedinfolist}")
            remainingnodes = [x for i, x in enumerate(remainingnodes) if x not in list(itertools.chain.from_iterable(reachedlist))]
            log.info(f"list of nodes that remain to be reached, i.e. remainingnodes: {remainingnodes}")
            gammaval += 1
@@ -304,7 +306,8 @@ def MiF_broadcast_withoutloop(adjacencymatrixchecked, startingvertex, beta = 0.5
            reachednodevalslist = reachednodevalslist + reached
            if len(remainingnodes) == 0:
                log.info(f"Gamma reached the maximum values, since all the nodes have been reached from the starting nodes.")
-               return reached
+               finalreachedresult = sorted([item for sublist in reachedinfolist for item in sublist], key=lambda x: x[1])
+               return finalreachedresult
                break
 
 def MiF_broadcast(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_threshold = 10, loop = 0,logger=None):
