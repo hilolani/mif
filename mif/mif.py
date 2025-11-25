@@ -315,23 +315,25 @@ def MiF_broadcast(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_thre
     elif loop == 1:
         return MiF_broadcast_withloop(adjacencymatrixchecked, startingvertex, beta, gamma_threshold,logger)
 
-def MiF_broadcast_diff_on_loop(result_withloop, result_withoutloop, logger=None):
+def MiF_broadcast_diff_on_loop_tmp(result_withloop, result_withoutloop, logger=None):
     log = resolve_logger(logger, "MiF")
+    print(log)
     diff_positions = []
     for i, (row0, row1) in enumerate(zip(result_withloop, result_withoutloop)):
         if row0[:2] != row1[:2]:
             log.error(f"The key differs in index {i}. No symmetrical comparison is possible.")
             continue
-    if not np.isclose(row0[2], row1[2]):
-        diff_positions.append({
-            'vertex pair': row0[:2],
-            'withloop_value': row0[2],
-            'withoutloop_value': row1[2],
-            "value diffrerence": row0[2] - row1[2]
-        })
+        if not np.isclose(row0[2], row1[2]):
+            print("OK")
+            diff_positions.append({
+                'vertex pair': row0[:2],
+                'withloop_value': row0[2],
+                'withoutloop_value': row1[2],
+                "value diffrerence": row0[2] - row1[2]
+            })
     log.info(f"The list of difference betweeen MiF_broadcast with and without loop: {diff_positions}")    
     return diff_positions
-
+    
 def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", beta = 0.2, gamma_threshold = 10, logger=None):
   log = resolve_logger(logger, "MiF")
   print(f"log name: {log.name}")
