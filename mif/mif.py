@@ -267,7 +267,7 @@ def MiF_broadcast_withloop(adjacencymatrixchecked, startingvertex, beta = 0.5, g
              return reached
              break
 
-def MiF_broadcast_withoutloop_tmp(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_threshold = 10, logger=None):
+def MiF_broadcast_withoutloop(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_threshold = 10, logger=None):
     log = resolve_logger(logger, "MiF")
     #print(f"log name: {log.name}")
     adj_matrix = adjacencymatrixchecked
