@@ -318,7 +318,7 @@ def MiF_broadcast(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_thre
     elif loop == 1:
         return MiF_broadcast_withloop(adjacencymatrixchecked, startingvertex, beta, gamma_threshold,logger)
 
-def MiF_broadcast_diff_on_loop_tmp(result_withloop, result_withoutloop, logger=None):
+def MiF_broadcast_diff_on_loop(result_withloop, result_withoutloop, logger=None):
     log = resolve_logger(logger, "MiF")
     print(log)
     diff_positions = []
@@ -459,4 +459,6 @@ def MiFDI(adjacencymatrixchecked, startingvertices="min", beta = 0.2, gamma_thre
     elif loop == 1:
         return MiFDI_withloop(adjacencymatrixchecked, startingvertices, beta, gamma_threshold,logger)
 
+def MiFDI_diff_on_loop_tmp(*args, **kwargs):
+    return MiF_broadcast_diff_on_loop(*args, **kwargs)
 
