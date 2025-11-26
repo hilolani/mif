@@ -374,8 +374,11 @@ def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", beta = 0.2,
          log.info(f"Gamma reached the maximum values, since all the nodes have been reached from the starting nodes.")
          break
   mifdi = sum(logmifmeanlist)
+  for i in range(0, len(startingnodes)):
+      allresult = sorted(logresultinfo + [[startingnodes[i], startingnodes[i], 0.0]],  key=lambda x: x[1])
   log.info(f"MiFDI value: {mifdi}")
-
+  return allresult, mifdi
+    
 def MiFDI_withoutloop(adjacencymatrixchecked, startingvertices = "min", beta = 0.2, gamma_threshold = 10, logger=None):
   log = resolve_logger(logger, "MiF")
   print(f"log name: {log.name}")
@@ -447,8 +450,6 @@ def MiFDI_withoutloop(adjacencymatrixchecked, startingvertices = "min", beta = 0
   mifdi = np.mean(mifval)
   log.info(f"MiFDI value: {mifdi}")
   return allresult, mifdi
-
-
 
 def MiFDI(adjacencymatrixchecked, startingvertices="min", beta = 0.2, gamma_threshold = 10, loop = 0, logger=None):
     log = resolve_logger(logger, "MiF")
