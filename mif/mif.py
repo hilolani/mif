@@ -349,23 +349,26 @@ def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", beta = 0.2,
       mindegnodes = [i for i, x in enumerate(deglst) if x == min(deglst)]
       log.info(f"the smallest degree: {smallestdegval}")
       log.info(f"the node numbers with the smallest degree : {mindegnodes}")
-      targettednodes = [i for i in alllistednodes if i not in mindegnodes]
       startingnodes = mindegnodes
   elif startingvertices == "max":
       largestdegval = max(deglst)
       maxdegnodes = [i for i, x in enumerate(deglst) if x == max(deglst)]
       log.info(f"the largest degree: {largestdegval}")
       log.info(f"the node numbers with the largest degree : {maxdegnodes}")
-      targettednodes = [i for i in alllistednodes if i not in maxdegnodes]
       startingnodes = maxdegnodes
+  targettednodes = [i for i in alllistednodes if i not in [startingnodes]]
   gammaval = 0
   logmifmeanlist =[]
   while gammaval < gamma_threshold:
-      mifsteps = [[startingnodes[i], MiF(adj_matrix,startingnodes[i], j, beta, gammaval)] for i in range(0, len(startingnodes)) for j in targettednodes]
-      reached = [[x, i] for i, x in enumerate(mifsteps) if x [1]!= np.float64(0.0)]
-      logresultinfo_tmp =  [[i[0][0], i[1], math.log(i[0][1])] for i in reached]
+      all_targets = range(len(deglst))
+      other_targets = [t for t in all_targets if t != startingnodes[0]]
+      print(f"Othertargest:{other_targets}")
+      mifsteps = [[startingnodes[i], MiF(adj_matrix,startingnodes[i], j, beta, gammaval)] for i in range(0, len(startingnodes)) for j in other_targets]
+      reached = [[startingnodes, target_id, val] for target_id, (_, val) in zip(other_targets, mifsteps) if val != 0.0]
+      log.info(f"The  number of reached nodes: {len(reached)}")
+      logresultinfo_tmp =  [[i[0][0], i[1], math.log(i[2])] for i in reached]
+      log.info(f"Current gamma: {gammaval}, [Starting node, Reached node, Log(MiF)]: {logresultinfo_tmp}")
       logresultinfo = [[x[0], x[1] - startingnodes.index(x[0]) *  len(targettednodes), x[2]] for i, x in enumerate(logresultinfo_tmp)]
-      log.info(f"Current gamma: {gammaval}, [Starting node, Reached node, Log(MiF)]: {logresultinfo}")
       meanlog =  np.mean([logresultinfo[l][2] for l in range(len(logresultinfo))])
       log.info(f"Current gamma: {gammaval}, Mean of the Log(MiF): {meanlog}")
       logmifmeanlist.append(meanlog)
@@ -373,9 +376,11 @@ def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", beta = 0.2,
       if len(mifsteps) == len(reached):
          log.info(f"Gamma reached the maximum values, since all the nodes have been reached from the starting nodes.")
          break
-  mifdi = sum(logmifmeanlist)
   for i in range(0, len(startingnodes)):
       allresult = sorted(logresultinfo + [[startingnodes[i], startingnodes[i], 0.0]],  key=lambda x: x[1])
+  log.info(f"allresult: {allresult}")
+  mifval = [x[2] for i, x in enumerate(allresult) if x[2] != 0]
+  mifdi = np.mean(mifval)
   log.info(f"MiFDI value: {mifdi}")
   return allresult, mifdi
     
