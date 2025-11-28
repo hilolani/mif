@@ -459,6 +459,6 @@ def MiFDI(adjacencymatrixchecked, startingvertices="min", beta = 0.2, gamma_thre
     elif loop == 1:
         return MiFDI_withloop(adjacencymatrixchecked, startingvertices, beta, gamma_threshold,logger)
 
-def MiFDI_diff_on_loop_tmp(*args, **kwargs):
+def MiFDI_diff_on_loop(*args, **kwargs):
     return MiF_broadcast_diff_on_loop(*args, **kwargs)
 
