@@ -492,13 +492,13 @@ def MiFDI_withoutloop(adjacencymatrixchecked, startingvertices = "min", dangn = 
   if dangn ==0 or dangn <=len(startingnodes):
         return [row for row in  allresultlist[dangn]], [row[2] for row in  allresultlist[dangn]]
       
-def MiFDI(adjacencymatrixchecked, startingvertices="min", beta = 0.2, gamma_threshold = 10, loop = 0, logger=None):
+def MiFDI(adjacencymatrixchecked, startingvertices="min", dangn = 0, beta = 0.2, gamma_threshold = 10, loop = 0, logger=None):
     log = resolve_logger(logger, "MiF")
     print(f"log name: {log.name}")
     if loop == 0:
-        return MiFDI_withoutloop(adjacencymatrixchecked, startingvertices, beta, gamma_threshold,logger)
+        return MiFDI_withoutloop(adjacencymatrixchecked, startingvertices, dangn, beta, gamma_threshold,logger)
     elif loop == 1:
-        return MiFDI_withloop(adjacencymatrixchecked, startingvertices, beta, gamma_threshold,logger)
+        return MiFDI_withloop(adjacencymatrixchecked, startingvertices, dangn, beta, gamma_threshold,logger)
 
 def MiFDI_diff_on_loop(*args, **kwargs):
     return MiF_broadcast_diff_on_loop(*args, **kwargs)
