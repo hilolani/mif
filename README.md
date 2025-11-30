@@ -37,11 +37,49 @@ This is an undirected graph representing the associative relationships between w
 
 MiF functions:
 
-The MiF() function specification is as follows. The first argument takes the adjacency matrix converted to a CSR sparse matrix by the adjacencyinfocheck() function. Not only Matrix Market format sparse matrices (.mtx files), but also sparse matrices in other formats, and even dense matrices (though not recommended), can be converted by the adjacencyinfocheck() function, so its output is fed into the MiF function. This function calculates the MiF value between vertices specified by the numbers placed in the second and third arguments. The fourth argument (corresponding to the beta value) and the fifth argument (corresponding to the gamma value) do not have default values set, so explicit input is required. However, the gamma_threshold, which terminates the random walk, is set to 10 by default in the seventh argument. The sixth argument defaults to 0, representing a 0-based index, and requires no special attention. If using a 1-based index, explicitly set this to 1. This also works if the first argument is a 1-based adjacency matrix. However, Scipy automatically converts mtx files (which are typically 1-based) to 0-based, so the need for explicit conversion is rare.
+The MiF() function specification is as follows. The first argument takes the adjacency matrix converted to a CSR sparse matrix by the adjacencyinfocheck() function. Not only Matrix Market format sparse matrices (.mtx files), but also sparse matrices in other formats, and even dense matrices (though not recommended), can be converted by the adjacencyinfocheck() function, so its output is fed into the MiF function. This function calculates the MiF value between vertices specified by the numbers placed in the second and third arguments. The fourth argument (corresponding to the beta value) and the fifth argument (corresponding to the gamma value) do not have default values set, so explicit input is required. However, the gamma_threshold, which terminates the random walk, is set to 10 by default in the seventh argument. The sixth argument defaults to 0, representing a 0-based index, and requires no special attention. If using a 1-based index, explicitly set this to 1. This also works if the first argument is a 1-based adjacency matrix. However, Scipy automatically converts mtx files (which are typically 1-based) to 0-based, so the need for explicit conversion is rare. For example, to calculate the MiF distance between vertex 3 and vertex 32 in the Karate Club network using a β value of 0.5 (default) and a γ value of 3 representing the number of steps: Use adjacencyinfocheckedlist[1], which is the adjacency matrix file karate.mtx stored in this repository converted to a CSR sparse matrix using the adjacencyinfocheck() function (see the example below).
 
-The MiF_broadcast() function calculates the MiF value between the starting vertex (specified by the first argument) and each reached vertex, within a default range of 10 steps. It uses the adjacency matrix converted to a CSR sparse matrix (first argument) and uses the vertex specified by the second argument as the starting point. The beta value is set to 0.5 by default in the third argument. The fourth argument, loop, is set to 0 by default. This means the random walk does not continue beyond the reached vertex, so no self-loop occurs there. Setting the fourth argument to 1 allows the random walk to continue from a vertex once it has been reached.
+    log_mif1 = MiF(adjacencylist[1], 4, 32, 0.5, 3)
 
-The MiFDI() function calculates the MiFDI values between the starting vertex (specified by the first argument) and each vertex reached, using the adjacent matrix converted to a csr sparse matrix (first argument). By default, it operates within a range of 10 steps. By default, the starting point is set to the vertex with the lowest degree, but the vertex with the highest degree can also be selected by specifying “max”. Note that the beta value for this function is set to 0.2 by default. The handling of the fourth argument, loop, is the same as for the MiF_broadcast() function.
+    print(log_mif1)
+
+This will do the job.
+
+
+The MiF_broadcast() function calculates the MiF value between the starting vertex (specified by the first argument) and each reached vertex, within a default range of 10 steps. It uses the adjacency matrix converted to a CSR sparse matrix (first argument) and uses the vertex specified by the second argument as the starting point. The beta value is set to 0.5 by default in the third argument. The fourth argument, loop, is set to 0 by default. This means the random walk does not continue beyond the reached vertex, so no self-loop occurs there. Setting the fourth argument to 1 allows the random walk to continue from a vertex once it has been reached. For example, in the Karate Club network, to broadcast MiF values from vertex 3 to all points while allowing self-loops, use:
+
+    log_without1 = MiF_broadcast(adjacencylist[1], 3)
+
+    log_with1 = MiF_broadcast(adjacencylist[1], 3, loop = 1)
+
+    print(f“MiF broadcast without loop: {log_without1}”)
+
+    print(f“MiF broadcast with loop: {log_with1}”)
+
+Omitting `loop = 1` disallows self-loops. Note that the MiF value for the starting vertex 3 is set to 0.
+
+
+The MiFDI() function calculates the MiFDI values between the starting vertices (specified by the first argument) and each vertex reached, using the adjacent matrix converted to a csr sparse matrix (first argument). By default, it operates within a range of 10 steps. By default, the starting point is set to the vertex with the lowest degree, but the vertex with the highest degree can also be selected by specifying “max”. Note that the beta value for this function is set to 0.2 by default. The handling of the fourth argument, loop, is the same as for the MiF_broadcast() function. The `MiF_broadcast()` function and the `MiFDI()` function are similar in that they both calculate the MiF value between the starting point and other vertices. However, the decisive differences are:
+
+1) MiFDI() determines the starting point by degree, so multiple starting points may exist and must be calculated separately, and
+   
+3) MiFDI() logarithmizes the MiF value
+   
+. In this function's specification, the argument dangn = 0 is the default setting. In this case, even if multiple starting points exist under conditions of maximum degree (startingvertices=“max”) or minimum degree (default setting startingvertices="min"), and even if the calculation process covers all starting points, the return value consists of only two items: the MiFDI information from the point with the youngest number (dangn = 0) and its logarithmized MiF value. Therefore, if a second starting point exists and you want its information, specify dangn = 1 as an argument. If you wish to return MiFDI information from all starting points collectively, please modify the final line of the MiFDI_withoutloop() and MiFDI_withloop() functions as appropriate. In the MiFDI() function, loop = 0 (default setting) disallows self-loops, while loop = 1 allows self-loops. This specification is identical to that of the MiF_broadcast() function. For example, to compute MiFDI from the vertex with the minimum degree for scalefree.mtx stored in this repository: 
+
+    logdiwithout3, logdiwithoutmifdival3 = MiFDI(adjacencylist[3], dangn = 0)
+
+    logdiwith3, logdiwithmifdival3 = MiFDI(adjacencylist[3], dangn = 0, loop = 1)
+
+    print(f“MiFDI result without loop: {logdiwithout3}”)
+
+    print(f“MiF values without loop: {logdiwithoutmifdival3}”)
+
+    print(f“MiFDI result with loop: {logdiwith3}”)
+
+    print(f“MiF values with loop: {logdiwithmifdival3}”)
+
+# how to load the mtx data in this repository 
 
     from mif import *
 
