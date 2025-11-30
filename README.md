@@ -79,7 +79,22 @@ The MiFDI() function calculates the MiFDI values between the starting vertices (
 
     print(f“MiF values with loop: {logdiwithmifdival3}”)
 
-# how to load the mtx data in this repository 
+Additionally, functions are provided to compare results with and without self-loop for each edge:
+
+MiF_broadcast_diff_on_loop()
+
+MiFDI_diff_on_loop()
+
+    MiF_broadcast_diff_on_loop(log_with1, log_without1)
+
+    MiFDI_diff_on_loop(logdiwith3, logdiwithout3)
+
+For details, please refer to the ipynb files in this repository.
+    
+
+# how to load the data
+
+This repository utilizes Bunch objects from the scikit-learn library to enable direct use of toy datasets and other small datasets. Bunch objects extend dictionaries by allowing access to values via keys. A Bunch is a dictionary-like object that enables accessing elements using dot notation (e.g., bunch.key). Usage is as follows:
 
     from mif import *
 
