@@ -337,7 +337,6 @@ def MiF_broadcast_diff_on_loop(result_withloop, result_withoutloop, logger=None)
     return diff_positions
     
 def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", dangn = 0, beta = 0.2, gamma_threshold = 10, logger=None):
-def MiFDI_withloop_tmp(adjacencymatrixchecked, startingvertices = "min", dangn = 0, beta = 0.2, gamma_threshold = 10, logger=None):
   log = resolve_logger(logger, "MiF")
   print(f"log name: {log.name}")
   adj_matrix = adjacencymatrixchecked
