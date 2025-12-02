@@ -337,6 +337,7 @@ def MiF_broadcast_diff_on_loop(result_withloop, result_withoutloop, logger=None)
     return diff_positions
     
 def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", dangn = 0, beta = 0.2, gamma_threshold = 10, logger=None):
+def MiFDI_withloop_tmp(adjacencymatrixchecked, startingvertices = "min", dangn = 0, beta = 0.2, gamma_threshold = 10, logger=None):
   log = resolve_logger(logger, "MiF")
   print(f"log name: {log.name}")
   adj_matrix = adjacencymatrixchecked
@@ -370,6 +371,7 @@ def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", dangn = 0, 
   log.info(f"The focused starting node is: {focusedstarting}")
   all_targets = range(len(deglst))
   allresultlist = []
+  allresultlist_i = []
   mifdilist = []
 
   for i in range(0, len(startingnodes)):
@@ -390,13 +392,17 @@ def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", dangn = 0, 
          meanlog =  np.mean([logresultinfo[l][2] for l in range(len(logresultinfo))])
          log.info(f"Current gamma for the starting node {startingnodes[i]}: {gammaval}, Mean of the Log(MiF): {meanlog} for the starting node {startingnodes[i]}")
          logmifmeanlist.append(meanlog)
-         allresult_i = []
-         mifdi_i = []
+         allresult_i = sorted(logresultinfo + [[startingnodes[i], startingnodes[i], 0.0]],  key=lambda x: x[1])
+         allresultlist_i = allresultlist_i + allresult_i
+         allresultlist_i = [list(t) for t in list(dict.fromkeys(tuple(row) for row in sorted(allresultlist_i)))]
+         log.info(f"semifinal allresult for {startingnodes[i]}: {allresultlist_i}")
          if len(mifsteps) == len(reached):
              log.info(f"Gamma reached the maximum values, since all the nodes have been reached from the starting node {startingnodes[i]}.")
+             allresultlist_i = allresultlist_i + allresult_i
+             allresultlist_i = [list(t) for t in list(dict.fromkeys(tuple(row) for row in sorted(allresultlist_i)))]
              allresult_i = sorted(logresultinfo_tmp + [[startingnodes[i], startingnodes[i], 0.0]],  key=lambda x: x[1])
              log.info(f"final allresult for {startingnodes[i]}: {allresult_i}")
-             mifval_i = [x[2] for i, x in enumerate(allresult_i) if x[2] != 0]
+             mifval_i = [x[2] for i, x in enumerate(allresult_i)]
              log.info(f"mifval_i : {mifval_i}")
              log.info(f"final MiFDI value for {startingnodes[i]}: {mifval_i} for the starting node {startingnodes[i]}.")
              allresultlist = allresultlist + [allresult_i]
@@ -406,6 +412,7 @@ def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", dangn = 0, 
          gammaval = gammaval + 1
   if dangn ==0 or dangn <=len(startingnodes):
       return allresultlist[dangn], mifdilist[dangn]
+      #return allresultlist, mifdilist
     
 def MiFDI_withoutloop(adjacencymatrixchecked, startingvertices = "min", dangn = 0, beta = 0.2, gamma_threshold = 10, logger=None):
   log = resolve_logger(logger, "MiF")
