@@ -336,7 +336,7 @@ def MiF_broadcast_diff_on_loop(result_withloop, result_withoutloop, logger=None)
     log.info(f"The list of difference betweeen MiF_broadcast with and without loop: {diff_positions}")    
     return diff_positions
     
-def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", dangn = 0, beta = 0.2, gamma_threshold = 10, logger=None):
+def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", dangn = 0, beta = 0.2, gamma_threshold = 10, allstartinginfo = 0, logger=None):
   log = resolve_logger(logger, "MiF")
   print(f"log name: {log.name}")
   adj_matrix = adjacencymatrixchecked
@@ -395,6 +395,7 @@ def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", dangn = 0, 
          allresultlist_i = allresultlist_i + allresult_i
          allresultlist_i = [list(t) for t in list(dict.fromkeys(tuple(row) for row in sorted(allresultlist_i)))]
          log.info(f"semifinal allresult for {startingnodes[i]}: {allresultlist_i}")
+         
          if len(mifsteps) == len(reached):
              log.info(f"Gamma reached the maximum values, since all the nodes have been reached from the starting node {startingnodes[i]}.")
              allresultlist_i = allresultlist_i + allresult_i
@@ -410,10 +411,16 @@ def MiFDI_withloop(adjacencymatrixchecked, startingvertices = "min", dangn = 0, 
              break
          gammaval = gammaval + 1
   if dangn ==0 or dangn <=len(startingnodes):
-      return allresultlist[dangn], mifdilist[dangn]
-      #return allresultlist, mifdilist
-    
-def MiFDI_withoutloop(adjacencymatrixchecked, startingvertices = "min", dangn = 0, beta = 0.2, gamma_threshold = 10, logger=None):
+      if allstartinginfo == 0:
+          return allresultlist[dangn], mifdilist[dangn]
+      else:    
+          return allresultlist, mifdilist
+  else:
+     msg = f"the dangn value has something wrong."
+     log.error(msg)
+     raise TypeError(msg)    
+
+def MiFDI_withoutloop(adjacencymatrixchecked, startingvertices = "min", dangn = 0, beta = 0.2, gamma_threshold = 10, allstartinginfo = 0, logger=None):
   log = resolve_logger(logger, "MiF")
   print(f"log name: {log.name}")
   adj_matrix = adjacencymatrixchecked
@@ -487,24 +494,36 @@ def MiFDI_withoutloop(adjacencymatrixchecked, startingvertices = "min", dangn = 
              log.info(f"Gamma reached the maximum values, since all the nodes have been reached from the starting node {startingnodes[i]}.")
              allresultlist_i = allresultlist_i + allresult_i
              allresultlist_i = [list(t) for t in list(dict.fromkeys(tuple(row) for row in sorted(allresultlist_i)))]
-             mifdilist_i = [row[2] for row in allresultlist_i]
              log.info(f"final allresult for {startingnodes[i]}: {allresultlist_i}")
-             log.info(f"final MiFDI value for {startingnodes[i]}: {mifdilist_i}")
+             mifval_i = [x[2] for i, x in enumerate(allresult_i)]
+             log.info(f"mifval_i : {mifval_i}")
+             log.info(f"final MiFDI value for {startingnodes[i]}: {mifval_i} for the starting node {startingnodes[i]}.")
              allresultlist = allresultlist + [allresultlist_i]
+             mifdilist = mifdilist + [mifval_i]
              log.info(f"final allresult for {startingnodes}: {allresultlist}")
              i = i + 1
              break
          gammaval = gammaval + 1
+         allresultlist =[row for row in allresultlist]
+         mifdilist = [[inner[2] for inner in group] for group in allresultlist]
   if dangn ==0 or dangn <=len(startingnodes):
-        return [row for row in  allresultlist[dangn]], [row[2] for row in  allresultlist[dangn]]
+      if allstartinginfo == 0:
+          return allresultlist[dangn], mifdilist[dangn]
+      else:    
+          return allresultlist, mifdilist
+  else:
+     msg = f"the dangn value has something wrong."
+     log.error(msg)
+     raise TypeError(msg)    
+
       
-def MiFDI(adjacencymatrixchecked, startingvertices="min", dangn = 0, beta = 0.2, gamma_threshold = 10, loop = 0, logger=None):
+def MiFDI(adjacencymatrixchecked, startingvertices="min", dangn = 0, beta = 0.2, gamma_threshold = 10, allstartinginfo = 0, loop = 0, logger=None):
     log = resolve_logger(logger, "MiF")
     print(f"log name: {log.name}")
     if loop == 0:
-        return MiFDI_withoutloop(adjacencymatrixchecked, startingvertices, dangn, beta, gamma_threshold,logger)
+        return MiFDI_withoutloop(adjacencymatrixchecked, startingvertices, dangn, beta, gamma_threshold, allstartinginfo, logger)
     elif loop == 1:
-        return MiFDI_withloop(adjacencymatrixchecked, startingvertices, dangn, beta, gamma_threshold,logger)
+        return MiFDI_withloop(adjacencymatrixchecked, startingvertices, dangn, beta, gamma_threshold, allstartinginfo, logger)
 
 def MiFDI_diff_on_loop(*args, **kwargs):
     return MiF_broadcast_diff_on_loop(*args, **kwargs)
