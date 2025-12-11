@@ -11,7 +11,7 @@ This package proposes a new metric called the MiF Degradation Index, abbreviated
 
 Several adjacent matrices for demonstration purposes are stored in this repository as Matrix Market mtx files and can be used for MiF calculations.
 
-Data Explanation:
+## Data Explanation:
 
 This repository allows you to load several examples of typical complex networks in the form of sparse adjacency matrices (mtx files).
 
