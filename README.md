@@ -46,7 +46,7 @@ The MiF() function specification is as follows. The first argument takes the adj
 
 This will do the job.
 
-
+### MiF_broadcast:
 The MiF_broadcast() function calculates the MiF value between the starting vertex (specified by the first argument) and each reached vertex, within a default range of 10 steps. It uses the adjacency matrix converted to a CSR sparse matrix (first argument) and uses the vertex specified by the second argument as the starting point. The beta value is set to 0.5 by default in the third argument. The fourth argument, loop, is set to 0 by default. This means the random walk does not continue beyond the reached vertex, so no self-loop occurs there. Setting the fourth argument to 1 allows the random walk to continue from a vertex once it has been reached. For example, in the Karate Club network, to broadcast MiF values from vertex 3 to all points while allowing self-loops, use:
 
     log_without1 = MiF_broadcast(adjacencylist[1], 3)
@@ -59,7 +59,7 @@ The MiF_broadcast() function calculates the MiF value between the starting verte
 
 Omitting `loop = 1` disallows self-loops. Note that the MiF value for the starting vertex 3 is set to 0.
 
-
+### MiFGI
 The MiFDI() function calculates the MiFDI values between the starting vertices (specified by the first argument) and each vertex reached, using the adjacent matrix converted to a csr sparse matrix (first argument). MiFDI stands for MiF Deterioration Index, indicating that the longer a random walk persists, the greater the distance between the starting point and each reached node. By default, it operates within a range of 10 steps. The starting point is set to the vertex with the lowest degree (as the default setting), but the vertex with the highest degree can also be selected by specifying “max”. Note that the beta value for this function is set to 0.2 by default. The handling of the fourth argument, loop, is the same as for the MiF_broadcast() function. The `MiF_broadcast()` function and the `MiFDI()` function are similar in that they both calculate the MiF value between the starting point and other vertices. However, the decisive differences are:
 
 1) MiFDI() determines the starting point by degree, so multiple starting points may exist and must be calculated separately, and
