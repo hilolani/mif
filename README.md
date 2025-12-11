@@ -93,7 +93,7 @@ MiFDI_diff_on_loop()
 For details, please refer to the ipynb files in this repository.
     
 
-# how to load the data
+# How to load the data
 
 This repository utilizes Bunch objects from the scikit-learn library to enable direct use of toy datasets and other small datasets. Bunch objects extend dictionaries by allowing access to values via keys. A Bunch is a dictionary-like object that enables accessing elements using dot notation (e.g., bunch.key). Usage is as follows:
 
