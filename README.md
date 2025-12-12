@@ -9,7 +9,9 @@ This package proposes a new metric called the MiF Degradation Index, abbreviated
 
 # usage
 Run
+
     pip install git+https://github.com/hilolani/mif.git
+    
 to use this program. (If you are using Google Colab, put "!" before "pip")    
 
 Several adjacent matrices for demonstration purposes are stored in this repository as Matrix Market mtx files and can be used for MiF calculations.
