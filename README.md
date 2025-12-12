@@ -44,7 +44,7 @@ This is an undirected graph representing the associative relationships between w
 
 ### MiF:
 
-　　　　MiF(adjacencymatrixchecked, x, y, beta, gamma,index_base = 0, gamma_threshold = 10, logger=None):
+    MiF(adjacencymatrixchecked, x, y, beta, gamma,index_base = 0, gamma_threshold = 10, logger=None):
 
 The MiF() function specification is as follows. The first argument takes the adjacency matrix converted to a CSR sparse matrix by the adjacencyinfocheck() function. Not only Matrix Market format sparse matrices (.mtx files), but also sparse matrices in other formats, and even dense matrices (though not recommended), can be converted by the adjacencyinfocheck() function, so its output is fed into the MiF function. This function calculates the MiF value between vertices specified by the numbers placed in the second and third arguments. The fourth argument (corresponding to the beta value) and the fifth argument (corresponding to the gamma value) do not have default values set, so explicit input is required. However, the gamma_threshold, which terminates the random walk, is set to 10 by default in the seventh argument. The sixth argument defaults to 0, representing a 0-based index, and requires no special attention. If using a 1-based index, explicitly set this to 1. This also works if the first argument is a 1-based adjacency matrix. However, Scipy automatically converts mtx files (which are typically 1-based) to 0-based, so the need for explicit conversion is rare. For example, to calculate the MiF distance between vertex 3 and vertex 32 in the Karate Club network using a β value of 0.5 (default) and a γ value of 3 representing the number of steps: Use adjacencyinfocheckedlist[1], which is the adjacency matrix file karate.mtx stored in this repository converted to a CSR sparse matrix using the adjacencyinfocheck() function (see the example below).
 
@@ -56,7 +56,7 @@ This will do the job.
 
 ### MiF_broadcast:
 
-　　　　MiF_broadcast(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_threshold = 10, loop = 0,logger=None):
+    MiF_broadcast(adjacencymatrixchecked, startingvertex, beta = 0.5, gamma_threshold = 10, loop = 0,logger=None):
 
 The MiF_broadcast() function calculates the MiF value between the starting vertex (specified by the first argument) and each reached vertex, within a default range of 10 steps. It uses the adjacency matrix converted to a CSR sparse matrix (first argument) and uses the vertex specified by the second argument as the starting point. The beta value is set to 0.5 by default in the third argument. The fourth argument, loop, is set to 0 by default. This means the random walk does not continue beyond the reached vertex, so no self-loop occurs there. Setting the fourth argument to 1 allows the random walk to continue from a vertex once it has been reached. For example, in the Karate Club network, to broadcast MiF values from vertex 3 to all points while allowing self-loops, use:
 
@@ -72,7 +72,7 @@ Omitting `loop = 1` disallows self-loops. Note that the MiF value for the starti
 
 ### MiFDI
 
-　　　　MiFDI(adjacencymatrixchecked, startingvertices="min", dangn = 0, beta = 0.2, gamma_threshold = 10, allstartinginfo = 0, loop = 0, logger=None):
+    MiFDI(adjacencymatrixchecked, startingvertices="min", dangn = 0, beta = 0.2, gamma_threshold = 10, allstartinginfo = 0, loop = 0, logger=None):
 
 The MiFDI() function calculates the MiFDI values between the starting vertices (specified by the first argument) and each vertex reached, using the adjacent matrix converted to a csr sparse matrix (first argument). MiFDI stands for MiF Deterioration Index, indicating that the longer a random walk persists, the greater the distance between the starting point and each reached node. By default, it operates within a range of 10 steps. The starting point is set to the vertex with the lowest degree (as the default setting), but the vertex with the highest degree can also be selected by specifying “max”. Note that the beta value for this function is set to 0.2 by default. The handling of the fourth argument, loop, is the same as for the MiF_broadcast() function. The `MiF_broadcast()` function and the `MiFDI()` function are similar in that they both calculate the MiF value between the starting point and other vertices. However, the decisive differences are:
 
