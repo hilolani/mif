@@ -100,9 +100,9 @@ MiF_broadcast_diff_on_loop()
 
 MiFDI_diff_on_loop()
 
-    MiF_broadcast_diff_on_loop(log_with1, log_without1)
+    broadcast_diff = MiF_broadcast_diff_on_loop(log_with1, log_without1)
 
-    MiFDI_diff_on_loop(logdiwith3, logdiwithout3)
+    di_diff = MiFDI_diff_on_loop(logdiwith3, logdiwithout3)
 
 For details, please refer to the ipynb files in this repository.
     
@@ -123,13 +123,13 @@ This repository utilizes Bunch objects from the scikit-learn library to enable d
 
     #Example of commands:
 
-    MiF(adjacencyinfocheckedlist[1], 4, 32, 0.5, 3)
+    mif_val = MiF(adjacencyinfocheckedlist[1], 4, 32, 0.5, 3)
 
-    MiF_broadcast(adjacencyinfocheckedlist[1], 3)
+    all_result = MiF_broadcast(adjacencyinfocheckedlist[1], 3)
 
-    MiF_broadcast(adjacencyinfocheckedlist[1], 3, loop = 1)
+    all_result = MiF_broadcast(adjacencyinfocheckedlist[1], 3, loop = 1)
 
-    MiFDI(adjacencyinfocheckedlist[1], loop = 1)
+    all_result, mifdi_list = MiFDI(adjacencyinfocheckedlist[1], loop = 1)
 
-    MiFDI(adjacencyinfocheckedlist[1], startingvertices="max")
+    all_result, mifdi_list = MiFDI(adjacencyinfocheckedlist[1], startingvertices="max")
     
