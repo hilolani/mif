@@ -3,9 +3,33 @@ A repository for calculating MiF (Markov inverse F-measure) using Python. MiF is
 
 cf. Hiroyuki Akama, Maki Miyake, Jaeyoung Jung, Brian Murphy, 2015. Using Graph Components Derived from an Associative Concept Dictionary to Predict fMRI Neural Activation Patterns that Represent the Meaning of Nouns, PLoS ONE, doi: https://doi.org/10.1371/journal.pone.0125725
 
-MiF calculates distances (similarity) between vertices (nodes) within complex networks, simultaneously incorporating and unifying two perspectives: co-occurrence-based (local co-occurrence) and geodesic-based (global-geodesic). The former quantifies local similarity between nodes, specifically the overlap between edges. Similar to the Jaccard coefficient and Simpson's coefficient, it calculates the overlap rate of paths connecting adjacent or proximate points. The latter considers the shortest path length, coding the distance between points such that the shorter the shortest path and the greater the number of paths taking the shortest path, the smaller the distance. The MiF value falls within the interval [0,1].
+MiF (Markov inverse F-measure)
 
-This package proposes a new metric called the MiF Degradation Index, abbreviated as MiFDI. It involves selecting a specific vertex (node), such as the one with the smallest degree, and initiating a random walk from it. The random walk continues until all vertices (nodes) are reached, calculating and listing the MiF value between the specific starting vertex (node) and each reached vertex (node). In MiFDI, MiF values are recorded as logarithms, so they can be negative. At each step of the random walk, the average of log(MiF value) is output. You can choose whether to include or exclude self-loops. If excluded, the random walk stops at a node once it is reached and does not proceed further from that node.
+While Re_MCL focuses on restructuring graph topology through Markov dynamics, MiF addresses a complementary problem: measuring similarity and distance within complex networks. MiF (Markov inverse F-measure) is a similarity (distance) measure between vertices in a graph, originally proposed by Akama et al. (2015).
+
+MiF evaluates how closely two vertices are related by modeling how information flows between them through a Markov random walk. Unlike conventional graph similarity measures, MiF integrates both local and global structural information into a single framework.
+
+From a local perspective, MiF considers co-occurrence-based similarity, which reflects how strongly two vertices overlap in their immediate neighborhoods. This idea is conceptually related to well-known measures such as the Jaccard and Simpson coefficients, which quantify similarity by the overlap of adjacent connections.
+
+From a global perspective, MiF also incorporates geodesic-based similarity, taking into account the shortest path length between vertices. In general, vertices connected by shorter paths and by a larger number of such paths are regarded as more similar. MiF naturally balances these two perspectives, enabling robust similarity estimation even in complex network structures.
+
+The MiF value is normalized to lie within the interval [0, 1], where larger values indicate stronger similarity.
+
+Parameterization and network characteristics
+
+MiF includes several free parameters that allow the metric to adapt to different network characteristics. In classical set-based similarity measures, normalization often relies on the size of the union of two sets. However, in graph-based settings, such normalization can become problematic due to degree imbalance, degree correlation, or scale-free structures.
+
+To address this issue, MiF introduces a parameter β (0 < β < 1), which controls how vertex degrees contribute to normalization. By using a harmonic-mean–based formulation, MiF can emphasize or suppress degree effects. In practice, choosing β values close to zero allows heterophilic or homophilic properties of the network to be highlighted more clearly.
+
+In addition, MiF considers the influence of longer paths in random walks. While shorter paths usually dominate similarity, longer paths and detours may still carry meaningful structural information. This effect is controlled by another parameter α, which gradually decreases the contribution of paths as their length increases.
+
+MiF Degradation Index (MiFDI)
+
+This package also introduces a derived metric called the MiF Degradation Index (MiFDI). MiFDI analyzes how similarity degrades as a random walk expands from a selected starting vertex.
+
+In MiFDI, a random walk is initiated from a specific vertex (for example, a vertex with minimal degree). As the walk progresses and reaches other vertices, the MiF values between the starting vertex and each visited vertex are computed. These values are recorded on a logarithmic scale and averaged at each step of the walk.
+
+Depending on the configuration, self-loops can be included or excluded. When self-loops are excluded, the random walk terminates propagation from a vertex once it has been reached. MiFDI provides a compact representation of how rapidly relational similarity decays across the network.
 
 # usage
 Run
