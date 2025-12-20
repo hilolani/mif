@@ -3,7 +3,7 @@ A repository for calculating MiF (Markov inverse F-measure) using Python. MiF is
 
 cf. Hiroyuki Akama, Maki Miyake, Jaeyoung Jung, Brian Murphy, 2015. Using Graph Components Derived from an Associative Concept Dictionary to Predict fMRI Neural Activation Patterns that Represent the Meaning of Nouns, PLoS ONE, doi: https://doi.org/10.1371/journal.pone.0125725
 
-MiF (Markov inverse F-measure)
+## MiF (Markov inverse F-measure)
 
 While Re_MCL focuses on restructuring graph topology through Markov dynamics, MiF addresses a complementary problem: measuring similarity and distance within complex networks. MiF (Markov inverse F-measure) is a similarity (distance) measure between vertices in a graph, originally proposed by Akama et al. (2015).
 
@@ -15,7 +15,7 @@ From a global perspective, MiF also incorporates geodesic-based similarity, taki
 
 The MiF value is normalized to lie within the interval [0, 1], where larger values indicate stronger similarity.
 
-Parameterization and network characteristics
+## Parameterization and network characteristics
 
 MiF includes several free parameters that allow the metric to adapt to different network characteristics. In classical set-based similarity measures, normalization often relies on the size of the union of two sets. However, in graph-based settings, such normalization can become problematic due to degree imbalance, degree correlation, or scale-free structures.
 
@@ -23,7 +23,7 @@ To address this issue, MiF introduces a parameter β (0 < β < 1), which control
 
 In addition, MiF considers the influence of longer paths in random walks. While shorter paths usually dominate similarity, longer paths and detours may still carry meaningful structural information. This effect is controlled by another parameter α, which gradually decreases the contribution of paths as their length increases.
 
-MiF Degradation Index (MiFDI)
+## MiF Degradation Index (MiFDI)
 
 This package also introduces a derived metric called the MiF Degradation Index (MiFDI). MiFDI analyzes how similarity degrades as a random walk expands from a selected starting vertex.
 
